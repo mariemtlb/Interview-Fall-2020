@@ -42,6 +42,36 @@ export class Launches {
   }
 
   /**
+   * Gets the spaceX launches in the range of
+   * @param start string with YYYY format
+   * @param end string with YYYY format
+   */
+  public async getLaunches(start: string, end: string): Promise<ILaunch[]> {
+    try {
+      // Get the start and end dates as a moment object
+      const startDateAsMoment = moment(start, 'YYYY');
+      const endDateAsMoment = moment(end, 'YYYY');
+      // Check that the date string is valid, and that the date is before or equal to today's date
+      // moment() creates a moment with today's date
+      if (!startDateAsMoment.isValid() || !startDateAsMoment.isSameOrBefore(moment())
+                || !endDateAsMoment.isValid() || !endDateAsMoment.isSameOrBefore(moment())) {
+        return [{ error: 'invalid start or end year' }];
+      }
+      // Get the parsed request
+      const parsed = await this.requestLaunchesByYear(start);
+      // Maps and creates the return list
+      return this.filterFields(parsed);
+    } catch (e) {
+      console.log(e);
+      return [
+        {
+          error: `There was an error retrieving this launch`,
+        },
+      ];
+    }
+  }
+
+  /**
    * Makes the api request for launches per year
    * @param year
    */

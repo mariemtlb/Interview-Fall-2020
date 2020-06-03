@@ -20,6 +20,26 @@ app.get('/yearly-launches', async (request: any, response: any) => {
   response.send(result);
 });
 
+// handles /range-launches get request
+app.get('/range-launches', async (request: any, response: any) => {
+    const launches = new Launches();
+
+    //getting the params
+    const queryString = window.location.search;
+    console.log(queryString);
+
+    const urlParams = new URLSearchParams(queryString);
+
+    let start : string = urlParams.get('start');
+    let end : string = urlParams.get('end');
+
+    //sends in start and end year as strings
+    const result = await launches.getLaunches(start, end);
+
+    response.send(result);
+
+});
+
 // start the Express server
 app.listen(port, () => {
   // tslint:disable-next-line:no-console
